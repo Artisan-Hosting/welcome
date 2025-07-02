@@ -1,7 +1,7 @@
 use artisan_middleware::{
     identity::Identifier, resource_monitor::get_system_stats, version::aml_version
 };
-use dusa_collection_utils::{log::{set_log_level, LogLevel}, stringy::Stringy, version::Version};
+use artisan_middleware::dusa_collection_utils::{logger::{set_log_level, LogLevel}, types::stringy::Stringy, version::Version};
 use lsb_release::LsbRelease;
 use colored::*;  // Add the colored crate for text colorization
 
@@ -17,10 +17,19 @@ async fn main() {
     };
 
     // Create new identifier if none 
-    let identifier: Identifier = Identifier::new().await.unwrap();
-    identifier.save_to_file().unwrap();
+    let identifier: Option<Identifier> = match Identifier::load_from_file() {
+        Ok(data) => Some(data),
+        Err(_) => None,
+    };
 
-    let id_info: Identifier = identifier;
+    // identifier.save_to_file().unwrap();
+
+    let id_info: String = if let Some(id) = identifier {
+        id.id.to_string()
+    } else {
+        "No identity file loaded".to_string()
+    };
+
     let ais_version: Version = aml_version();
     let system_version: LsbRelease = lsb_release::info().unwrap_or(lsb_failsafe);
     let system_hostname = gethostname::gethostname();
@@ -32,7 +41,7 @@ async fn main() {
 
 {subtitle}
 
-machine id       : {machine_id}
+Node id       : {machine_id}
 Os Information   : {os_version}
 Artisan Library  : {ais_version}
 Hostname         : {hostname}
@@ -54,18 +63,16 @@ Memory used      : {mem_usage}
                                                                                    |___/   
         "#).bold().blue(),
         
-        subtitle = "Your machine at a glance:".bold().cyan(),
-        machine_id = id_info.id.to_string().bold().purple(),
+        subtitle = "Node at a glance:".bold().cyan(),
+        machine_id = id_info.bold().purple(),
         os_version = format!("{} - {}", system_version.version, system_version.code_name).bold().cyan(),
         ais_version = ais_version.to_string().bold().cyan(),
-        // welcome_version = welcome_version.to_string().bold().cyan(),
         hostname = format!("{:?}", system_hostname).bold().cyan(),
         mem_usage = system.get(&Stringy::from("Used RAM")).unwrap_or(&Stringy::from("X.xx")).bold().cyan(),
         greeting = "Welcome!".bold().green(),
-        support_message = "This server is hosted by Artisan Hosting. If you're reading this now would probably be a good time to get in contact your support engineer !!!
-These environments rely on a lot of automation and software that's been designed for your specific use case. In other words this may break quickly if you aren't aware
-of the ais platform, software and systems".bold().to_uppercase().bright_green(),
-// to contact me at dwhitfield@artisanhosting.net or shoot me a text at 414-578-0988. Thank you for supporting me and Artisan Hosting.".bold().white()
+        support_message = "This server is hosted by Artisan Hosting. If you're reading this you are one of two people. 1. A poor bastard trying to help me fix some 
+virtual machine issues. 2. A curious bastard trying to poke around and break things. In any case to both of you, Good luck, things may break quickly if, you
+haven't read the poor and sparse documentation i've \"written\".".bold().bright_green(),
     );
 
     println!("{}", welcome_text);
