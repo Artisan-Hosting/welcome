@@ -1,7 +1,7 @@
 use artisan_middleware::{
     identity::Identifier, resource_monitor::get_system_stats, version::aml_version
 };
-use artisan_middleware::dusa_collection_utils::{logger::{set_log_level, LogLevel}, types::stringy::Stringy, version::Version};
+use artisan_middleware::dusa_collection_utils::core::{logger::{set_log_level, LogLevel}, types::stringy::Stringy, version::Version};
 use lsb_release::LsbRelease;
 use colored::*;  // Add the colored crate for text colorization
 
