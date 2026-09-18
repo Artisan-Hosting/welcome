@@ -4,12 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-#artisan_middleware = "7.0.0"
-# TEMPORARY local path for the resource-taxonomy migration -- 7.0.0 isn't
-# published yet, and /opt/artisan/lib/artisan_lib doesn't exist on a dev
-# machine either way (this crate could not build as checked in). MUST be
-# reverted to the registry pin above before this is ever pushed/merged.
-artisan_middleware = { path = "../../Libraries/artisan_lib" }
+artisan_middleware = "7.0.0"
 colored = "2.1.0"
 #dusa_collection_utils = "3.0.8"
 gethostname = "0.5.0"
