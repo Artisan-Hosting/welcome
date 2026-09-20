@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-artisan_middleware = "7.0.0"
+artisan_middleware = {path = "/opt/artisan/lib/artisan_lib"}
 colored = "2.1.0"
 #dusa_collection_utils = "3.0.8"
 gethostname = "0.5.0"
